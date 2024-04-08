@@ -1,0 +1,42 @@
+Measures:
+
+1.Total Repayment = 
+    VAR Num = SUM('Loan Data'[total_payment])
+        RETURN
+            IF(ISBLANK(Num),0,Num)
+
+2.Total Loan Aplication = 
+    VAR Num = DISTINCTCOUNT('Customer Data'[id])
+        RETURN
+            IF(ISBLANK(Num),0,Num)
+
+3.Total Amount Funded = 
+    VAR Num = SUM('Loan Data'[loan_amount])
+        RETURN
+            IF(ISBLANK(Num), 0, Num)
+
+4.Good Loan = CALCULATE([Total Amount Funded],
+    'Loan Data'[Loan Category] = "Good Loan")
+
+5.Bad Loan = CALCULATE([Total Amount Funded],
+    'Loan Data'[Loan Category] = "Bad Loan")
+
+6.Avg Debt/Income Ratio = 
+VAR Num = AVERAGE('Loan Data'[dti]) 
+    RETURN
+        IF(ISBLANK(Num),0,Num)
+
+7.Average Int Rate = 
+    VAR Num = AVERAGE('Loan Data'[int_rate])
+        RETURN
+            IF(ISBLANK(Num),0,Num)
+
+8.% Good Loan = DIVIDE([Good Loan],[Total Amount Funded],0)
+
+9.% Bad Loan = DIVIDE([Bad Loan], [Total Amount Funded])
+
+Calculated Column:
+
+10.Loan Category = SWITCH(TRUE(),'Loan Data'[loan_status] = "Fully Paid",
+    "Good Loan", 'Loan Data'[loan_status] = "Current", "Good Loan",
+        'Loan Data'[loan_status] = "Charged Off", "Bad Loan")
